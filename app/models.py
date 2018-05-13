@@ -26,7 +26,7 @@ class CatalogoEstadoReporte(db.Model):
 
 class CatalogoFuenteInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fuente_descripcion = db.Column(db.String(20))
+    descripcion = db.Column(db.String(20))
 
 
 class CatalogoHorario(db.Model):
