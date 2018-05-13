@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-10">
+              <div class="card">
+                <div class="card-header" data-background-color="red">
+                  <h4 class="title">Ubicación y detalles</h4>
+                  <p class="category">Selecciona un punto en el mapa y agrega la información correspondiente:</p>
+                </div>
+                <div class="card-content">
+                  <form>
+                    {{ form.hidden_tag() }}
+                    <div class="row">
+                      <iframe width="100%" height="300" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJI_9zbjCyKIQRiqCr5SoXjcY&key=AIzaSyCMDMIeE2JDmZzB-WngFZP9GSEMfIZLVJQ" allowfullscreen></iframe>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group label-floating">
+                          <label class="label">Tipo</label>
+                            <select name="crime">
+                              {% for delito in delitos %}
+                                <option value="{{ delito.id }}"> {{ delito.descripcion }} </option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group label-floating">
+                          <label class="label">Horario</label>
+                            <select name="hour">
+                              {% for horario in horarios %}
+                                <option value="{{ horario.id }}"> {{ horario.descripcion }} </option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                      </div>
+                      <div class="col-md-4">
+                        <div class="form-group label-floating">
+                            <label class="label">Fuente de Información</label>
+                            <select name="reference">
+                              {% for fuente in fuentes %}
+                                <option value="{{ fuente.id }}"> {{ fuente.descripcion }} </option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="form-group">
+                            <label>Fecha del acontecimiento</label>
+                              <input class="datepicker form-control" type="text" value="20/09/2017"/>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label>DETALLES</label>
+                              <div class="form-group label-floating">
+                                <label class="control-label">Cuéntanos más a detalle lo que pasó y lo que viste.</label>
+                                <textarea class="form-control" rows="5"></textarea>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-success pull-right">Enviar</button>
+                        <div class="clearfix"></div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+    $("input:checkbox").on('click', function() {
+      // in the handler, 'this' refers to the box clicked on
+      var $box = $(this);
+      if ($box.is(":checked")) {
+        // the name of the box is retrieved using the .attr() method
+        // as it is assumed and expected to be immutable
+        var group = "input:checkbox[name='" + $box.attr("name") + "']";
+        // the checked state of the group/box on the other hand will change
+        // and the current value is retrieved using .prop() method
+        $(group).prop("checked", false);
+        $box.prop("checked", true);
+      } else {
+        $box.prop("checked", false);
+      }
+    });
+    </script>
+
+    <script type="text/javascript">
+        $('.datepicker').datepicker({
+        weekStart:1
+    });
+    </script>
+{% endblock %}
