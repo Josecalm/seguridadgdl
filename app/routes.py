@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, CreateReportForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Persona, Usuario, CatalogoDelito, CatalogoHorario, \
     CatalogoFuenteInfo
@@ -48,9 +48,9 @@ def register():
 @app.route('/createreport')
 @login_required
 def create_report():
-    crimes = CatalogoDelito.query.all()
-    hours = CatalogoHorario.query.all()
-    info = CatalogoFuenteInfo.query.all()
-    form = LoginForm() # Temporal fix TODO: create ReportForm
+    form = CreateReportForm()
+    form.crime.choices = [(c.id, c.descripcion) for c in CatalogoDelito.query.all()]
+    form.hour.choices = [(h.id, h.descripcion) for h in CatalogoHorario.query.all()]
+    form.reference.choices = [(r.id, r.descripcion) for r in CatalogoFuenteInfo.query.all()]    
     return render_template('create_report.html', title='Crear Reporte', active='add_report',
-         delitos=crimes, horarios=hours, fuentes=info, form=form)
+        form=form)

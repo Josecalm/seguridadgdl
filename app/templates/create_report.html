@@ -18,33 +18,18 @@
                     </div>
                     <div class="row">
                       <div class="col-md-4">
-                        <div class="form-group label-floating">
-                          <label class="label">Tipo</label>
-                            <select name="crime">
-                              {% for delito in delitos %}
-                                <option value="{{ delito.id }}"> {{ delito.descripcion }} </option>
-                              {% endfor %}
-                            </select>
+                        <div class="form-group">
+                          {{ form.crime.label(class="control-label") }} {{ form.crime }}
                         </div>
                       </div>
                       <div class="col-md-4">
-                        <div class="form-group label-floating">
-                          <label class="label">Horario</label>
-                            <select name="hour">
-                              {% for horario in horarios %}
-                                <option value="{{ horario.id }}"> {{ horario.descripcion }} </option>
-                              {% endfor %}
-                            </select>
+                        <div class="form-group">
+                          {{ form.hour.label(class="control-label") }} {{ form.hour }}
                         </div>
                       </div>
                       <div class="col-md-4">
-                        <div class="form-group label-floating">
-                            <label class="label">Fuente de Información</label>
-                            <select name="reference">
-                              {% for fuente in fuentes %}
-                                <option value="{{ fuente.id }}"> {{ fuente.descripcion }} </option>
-                              {% endfor %}
-                            </select>
+                        <div class="form-group">
+                            {{ form.reference.label(class="control-label") }} {{ form.reference }}
                         </div>
                       </div>
                       <div class="row">
@@ -61,7 +46,7 @@
                             <label>DETALLES</label>
                               <div class="form-group label-floating">
                                 <label class="control-label">Cuéntanos más a detalle lo que pasó y lo que viste.</label>
-                                <textarea class="form-control" rows="5"></textarea>
+                                {{ form.details }}
                               </div>
                           </div>
                         </div>
