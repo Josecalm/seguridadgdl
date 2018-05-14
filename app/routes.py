@@ -1,13 +1,14 @@
 from flask import render_template, flash, redirect, url_for
 from app import app, db
-from app.forms import LoginForm, RegistrationForm
-from flask_login import current_user, login_user, logout_user
-from app.models import Persona, Usuario
+from app.forms import LoginForm, RegistrationForm, CreateReportForm
+from flask_login import current_user, login_user, logout_user, login_required
+from app.models import Persona, Usuario, CatalogoDelito, CatalogoHorario, \
+    CatalogoFuenteInfo
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', title='Inicio', active='maps')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -44,4 +45,12 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
-
+@app.route('/createreport')
+@login_required
+def create_report():
+    form = CreateReportForm()
+    form.crime.choices = [(c.id, c.descripcion) for c in CatalogoDelito.query.all()]
+    form.hour.choices = [(h.id, h.descripcion) for h in CatalogoHorario.query.all()]
+    form.reference.choices = [(r.id, r.descripcion) for r in CatalogoFuenteInfo.query.all()]    
+    return render_template('create_report.html', title='Crear Reporte', active='add_report',
+        form=form)

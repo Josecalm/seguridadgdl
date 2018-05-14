@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import Persona, Usuario
+from app.models import Persona, Usuario, CatalogoDelito
 
 class LoginForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired()])
@@ -26,4 +26,9 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Ya existe un usuario registrado con ese correo. Por favor ingrese otro.')
 
-
+class CreateReportForm(FlaskForm):
+    crime = SelectField('Tipo de delito', coerce=int)
+    hour = SelectField('Horario', coerce=int)
+    reference = SelectField('Fuente información', coerce=int)
+    details = TextAreaField()
+    submit = SubmitField('Crear reporte')
