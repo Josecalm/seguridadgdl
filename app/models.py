@@ -98,6 +98,8 @@ class Reporte(db.Model):
     delito_id = db.Column(db.Integer, db.ForeignKey('catalogo_delito.id'))
     operador_id = db.Column(db.Integer, db.ForeignKey('operador.id'))
     hora_delito_id = db.Column(db.Integer, db.ForeignKey('catalogo_horario.id'))
+    latitud = db.Column(db.Float)
+    longitud = db.Column(db.Float)
     sector = db.Column(db.Integer)
     estado_id = db.Column(db.Integer, db.ForeignKey('catalogo_estado_reporte.id'))
     detalles = db.Column(db.Text)
@@ -118,10 +120,6 @@ class Sector(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(35))
     coordenadas = db.Column(db.JSON)
-
-    def __init__(self, sector_id, sector_coordenadas):
-        self.sector_id = sector_id
-        self.sector_coordenadas = sector_coordenadas
 
 class Mapa(db.Model):
     id = db.Column(db.Integer, primary_key=True)

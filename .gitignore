@@ -2,7 +2,8 @@
 __pycache__/
 app/__pycache__
 venv/
-
+*.json
+load_sectors_json.py
 # RECOMMENDED #
 
 #Compiled source #

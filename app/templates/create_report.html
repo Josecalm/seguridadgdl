@@ -11,11 +11,14 @@
                   <p class="category">Selecciona un punto en el mapa y agrega la información correspondiente:</p>
                 </div>
                 <div class="card-content">
-                  <form>
+                  <form method="post" onsubmit="assignZone()">
                     {{ form.hidden_tag() }}
                     <div class="row">
-                      <iframe width="100%" height="300" frameborder="0" style="border:0" src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJI_9zbjCyKIQRiqCr5SoXjcY&key=AIzaSyCMDMIeE2JDmZzB-WngFZP9GSEMfIZLVJQ" allowfullscreen></iframe>
+                      <div id="map_report"></div>
                     </div>
+                    {{ form.coordinates_lng }}
+                    {{ form.coordinates_lat }}
+                    {{ form.zone }}
                     <div class="row">
                       <div class="col-md-4">
                         <div class="form-group">
@@ -35,8 +38,7 @@
                       <div class="row">
                         <div class="col-md-4">
                           <div class="form-group">
-                            <label>Fecha del acontecimiento</label>
-                              <input class="datepicker form-control" type="text" value="20/09/2017"/>
+                            {{ form.date.label(class="control-label") }} {{ form.date(class="dtpick")}}
                           </div>
                         </div>
                       </div>
@@ -51,7 +53,7 @@
                           </div>
                         </div>
                       </div>
-                      <button type="submit" class="btn btn-success pull-right">Enviar</button>
+                        {{ form.submit(class="btn btn-success pull-right") }}
                         <div class="clearfix"></div>
                   </form>
                 </div>
@@ -63,27 +65,60 @@
 {% endblock %}
 
 {% block script %}
-    <script type="text/javascript">
-    $("input:checkbox").on('click', function() {
-      // in the handler, 'this' refers to the box clicked on
-      var $box = $(this);
-      if ($box.is(":checked")) {
-        // the name of the box is retrieved using the .attr() method
-        // as it is assumed and expected to be immutable
-        var group = "input:checkbox[name='" + $box.attr("name") + "']";
-        // the checked state of the group/box on the other hand will change
-        // and the current value is retrieved using .prop() method
-        $(group).prop("checked", false);
-        $box.prop("checked", true);
-      } else {
-        $box.prop("checked", false);
-      }
+  <script src="../static/js/gdl.js" type="text/javascript"></script>
+  <script>
+    $(function() {
+      $( ".dtpick" ).datepicker( {
+        dateFormat: 'dd-mm-yy',
+      });
     });
-    </script>
 
-    <script type="text/javascript">
-        $('.datepicker').datepicker({
-        weekStart:1
+    $(function(){
+       $(window).load(function(){
+          for (var i = polygons.length - 1; i >= 0; i--) {
+            polygons[i].setMap(map);
+          }
+       });
     });
-    </script>
+
+    var marker;
+    var uluru = {lat: 20.6556096, lng: -103.331120};
+    var map = new google.maps.Map(document.getElementById('map_report'), {
+      zoom: 13,
+      center: uluru,
+      draggableCursor: 'default'
+    });
+    var prevMarker = new google.maps.Marker({
+      position: uluru,
+      map: map
+    });
+
+    google.maps.event.addListener(map, 'click', function(e) {
+      prevMarker.setMap(null)
+      placeMarker(e.latLng, map);
+      $("#coordinates_lat").val(prevMarker.position.lat());
+      $("#coordinates_lng").val(prevMarker.position.lng());
+      assignZone();
+    });
+
+    function placeMarker(position, map) {
+      marker = new google.maps.Marker({
+        position: position,
+        map: map
+      });
+      prevMarker = marker;
+      map.panTo(position);
+    }
+
+    function assignZone() {
+      point = new google.maps.LatLng(prevMarker.position.lat(), prevMarker.position.lng());
+      for(var i = 0; i < polygons.length; i++) {
+        if (google.maps.geometry.poly.containsLocation(point, polygons[i])) {
+            $("#zone").val(i + 1);
+            console.log(document.getElementById("zone").value)
+            break;
+        }
+      }
+    }
+  </script>
 {% endblock %}
