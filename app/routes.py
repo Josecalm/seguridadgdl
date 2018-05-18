@@ -42,7 +42,7 @@ def register():
         person.set_password(form.password.data)
         db.session.add(person)
         db.session.commit()
-        user = Usuario(correo=form.email.data, persona_id=person.id, sexo_id=form.sexo.data)
+        user = Usuario(correo=form.email.data, persona_id=person.id, sexo_id=form.sex.data, fecha_nac=form.birthdate.data)
         db.session.add(user)
         db.session.commit()
         flash('El usuario ha sido registrado exitosamente!')
@@ -84,10 +84,12 @@ def edit_profile():
     form = EditProfileForm()
     if form.validate_on_submit():
         current_user.username = form.username.data
-        current_user.nombre = form.nombre.data
+        current_user.nombre = form.name.data
+        user = Usuario.query.filter_by(persona_id = current_user.id).first_or_404()
+        user.sexo_id = form.sex.data
         db.session.commit()
         flash('Tus cambios han sido guardados.')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for( 'user', username=current_user.username ) )
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.nombre.data = current_user.nombre

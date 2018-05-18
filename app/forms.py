@@ -15,7 +15,8 @@ class RegistrationForm(FlaskForm):
     email = StringField('Correo', validators=[DataRequired(), Email()])
     password = PasswordField('Contrasena', validators=[DataRequired()])
     password2 = PasswordField('Repita contrasena', validators=[DataRequired(), EqualTo('password')])
-    sexo = SelectField('Sexo', coerce=int, choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()], default = 2)
+    sex = SelectField('Sexo', coerce=int, choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()], default = 2)
+    birthdate = DateField('Fecha de Nacimiento', [validators.Required()], format='%d-%m-%Y')
     submit = SubmitField('Registrarse')
 
     def validate_username(self, username):
@@ -42,7 +43,10 @@ class CreateReportForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     nombre = TextAreaField()
     username = TextAreaField('Username', validators=[DataRequired()])
-    #fecha_nac = TextAreaField('Fecha de nacimiento')
-    sexo = SelectField('Sexo', coerce=int)
+    sex = SelectField('Sexo', coerce=int, choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()] )
     submit = SubmitField('Guardar información')
-
+    
+    def validate_username(self, username):
+        user = Persona.query.filter_by(username=username.data).first()
+        if ((user is not None) and (user.username != username.data)):
+            raise ValidationError('Por favor ingresa otro nombre de usuario.')
