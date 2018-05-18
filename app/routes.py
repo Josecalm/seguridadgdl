@@ -1,10 +1,11 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, CreateReportForm
+from app.forms import LoginForm, RegistrationForm, CreateReportForm, EditProfileForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Persona, Usuario, CatalogoDelito, CatalogoHorario, \
-    CatalogoFuenteInfo, Reporte
+    CatalogoFuenteInfo, Reporte, CatalogoSexo
 from datetime import date
+
 
 @app.route('/')
 @app.route('/index')
@@ -35,10 +36,11 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
+    #form.sexo.choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()]
     if form.validate_on_submit():
         person = Persona(username=form.username.data, nombre=form.name.data)
         person.set_password(form.password.data)
-        user = Usuario(correo=form.email.data, persona_id=person.id)
+        user = Usuario(correo=form.email.data, persona_id=person.id, sexo_id=form.sexo.data)
         db.session.add(person)
         db.session.add(user)
         db.session.commit()
@@ -64,3 +66,28 @@ def create_report():
         return redirect(url_for('index'))    
     return render_template('create_report.html', title='Crear Reporte', active='add_report',
         form=form)
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    persona = Persona.query.filter_by(username=username).first_or_404()
+    usuario = Usuario.query.filter_by(persona_id=current_user.id).first_or_404() 
+    return render_template('profile.html', title='Perfil de usuario', active='user_profile',
+        persona=persona, usuario=usuario)
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.nombre = form.nombre.data
+        db.session.commit()
+        flash('Tus cambios han sido guardados.')
+        return redirect(url_for('edit_profile'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.nombre.data = current_user.nombre
+    return render_template('edit_profile.html', title='Editar Perfil',
+                           form=form)

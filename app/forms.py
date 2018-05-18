@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateField, HiddenField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
-from app.models import Persona, Usuario, CatalogoDelito
 from datetime import date
+from app.models import Persona, Usuario, CatalogoDelito, CatalogoSexo, CatalogoFuenteInfo, CatalogoHorario
 
 class LoginForm(FlaskForm):
     username = StringField('Usuario', validators=[DataRequired()])
@@ -15,6 +15,7 @@ class RegistrationForm(FlaskForm):
     email = StringField('Correo', validators=[DataRequired(), Email()])
     password = PasswordField('Contrasena', validators=[DataRequired()])
     password2 = PasswordField('Repita contrasena', validators=[DataRequired(), EqualTo('password')])
+    sexo = SelectField('Sexo', coerce=int, choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()], default = 2)
     submit = SubmitField('Registrarse')
 
     def validate_username(self, username):
@@ -28,12 +29,20 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Ya existe un usuario registrado con ese correo. Por favor ingrese otro.')
 
 class CreateReportForm(FlaskForm):
-    crime = SelectField('Tipo de delito', coerce=int)
-    hour = SelectField('Horario', coerce=int)
-    reference = SelectField('Fuente información', coerce=int)
+    crime = SelectField('Tipo de delito', coerce=int, choices = [(c.id, c.descripcion) for c in CatalogoDelito.query.all()])
+    hour = SelectField('Horario', coerce=int, choices = [(h.id, h.descripcion) for h in CatalogoHorario.query.all()])
+    reference = SelectField('Fuente información', coerce=int, choices = [(r.id, r.descripcion) for r in CatalogoFuenteInfo.query.all()])
     date = DateField('Fecha', format='%d-%m-%Y')
     details = TextAreaField()
     submit = SubmitField('Crear reporte')
     coordinates_lng = HiddenField()
     coordinates_lat = HiddenField()
     zone = HiddenField()
+
+class EditProfileForm(FlaskForm):
+    nombre = TextAreaField()
+    username = TextAreaField('Username', validators=[DataRequired()])
+    #fecha_nac = TextAreaField('Fecha de nacimiento')
+    sexo = SelectField('Sexo', coerce=int)
+    submit = SubmitField('Guardar información')
+

@@ -78,9 +78,9 @@
           {% else %}
           <li>
           {% endif %}  
-            <a href="#">
+          <a href="{{ url_for( 'user', username=current_user.username ) }}">
               <i class="material-icons">account_box</i>
-              <p>Perfil ({{current_user.nombre}})</p>
+              <p>Perfil ({{current_user.username}})</p>
             </a>
           </li>
         {% endif %}

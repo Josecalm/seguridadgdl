@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header" data-background-color="red">
+              <h4 class="title">Perfil de usuario</h4>
+              <p class="category">Información de tu perfil</p>
+            </div>
+            <div class="card-content">
+              <form>
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group label-floating">
+                      <label class="control-label">Nombre de usuario</label>
+                      <h4 class="card-title">{{ persona.username }}</h4>
+                    </div>
+                  </div>                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group label-floating">
+                      <label class="control-label">Nombre Completo</label>
+                      <h4 class="card-title">{{ persona.nombre }}</h4>
+                    </div>
+                  </div>                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group label-floating">
+                      <label class="control-label">Fecha de nacimiento</label>
+                      <h4 class="card-title">{{ persona.fec_nac }}</h4>
+                    </div>
+                  </div>                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group label-floating">
+                      <label class="control-label">Sexo</label>
+                      <h4 class="card-title">{{ persona.id_sexo }}</h4>
+                    </div>
+                  </div>                  
+                </div>
+
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group label-floating">
+                      <label class="control-label">Correo</label>
+                      <h4 class="card-title">{{ usuario.correo }}</h4>
+                    </div>
+                  </div>                  
+                </div>
+                
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-success pull-right">Editar Perfil</a>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card card-profile">
+            <div class="card-avatar">
+              <a href="#pablo">
+                <img class="img" src="../static/img/faces/marc.jpg" />
+              </a>
+            </div>
+            <div class="content">
+              <h6 class="category text-gray">CEO / Co-Fundador</h6>
+              <h4 class="card-title">{{ persona.nombre }}</h4>
+              <a href="{{ url_for('logout') }}" class="btn btn-danger btn-round">Cerrar Sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <!--   Core JS Files   -->
+  <script src="../static/js/jquery-3.2.1.min.js" type="text/javascript"></script>
+  <script src="../static/js/bootstrap.min.js" type="text/javascript"></script>
+  <script src="../static/js/material.min.js" type="text/javascript"></script>
+  <!--  Charts Plugin -->
+  <script src="../static/js/chartist.min.js"></script>
+  <!--  Dynamic Elements plugin -->
+  <script src="../static/js/arrive.min.js"></script>
+  <!--  PerfectScrollbar Library -->
+  <script src="../static/js/perfect-scrollbar.jquery.min.js"></script>
+  <!--  Notifications Plugin    -->
+  <script src="../static/js/bootstrap-notify.js"></script>
+  <!--  Google Maps Plugin    -->
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+  <!-- Material Dashboard javascript methods -->
+  <script src="../static/js/material-dashboard.js?v=1.2.0"></script>
+  <!-- Material Dashboard DEMO methods, don't include it in your project! -->
+  <script src="../static/js/demo.js"></script>
+
+{% endblock %}
