@@ -3,7 +3,8 @@ from app import app, db
 from app.forms import LoginForm, RegistrationForm, CreateReportForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Persona, Usuario, CatalogoDelito, CatalogoHorario, \
-    CatalogoFuenteInfo
+    CatalogoFuenteInfo, Reporte
+from datetime import date
 
 @app.route('/')
 @app.route('/index')
@@ -45,12 +46,21 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
-@app.route('/createreport')
+@app.route('/create_report', methods=['GET', 'POST'])
 @login_required
 def create_report():
     form = CreateReportForm()
     form.crime.choices = [(c.id, c.descripcion) for c in CatalogoDelito.query.all()]
     form.hour.choices = [(h.id, h.descripcion) for h in CatalogoHorario.query.all()]
-    form.reference.choices = [(r.id, r.descripcion) for r in CatalogoFuenteInfo.query.all()]    
+    form.reference.choices = [(r.id, r.descripcion) for r in CatalogoFuenteInfo.query.all()]
+    if form.validate_on_submit():
+        lat = float(form.coordinates_lat.data)
+        lng = float(form.coordinates_lng.data)
+        zone = int(form.zone.data)
+        report = Reporte(usuario_id=current_user.id, fecha=form.date.data, delito_id=form.crime.data,
+            hora_delito_id=form.hour.data, detalles=form.details.data, latitud=lat, longitud=lng, sector=zone)
+        db.session.add(report)
+        db.session.commit()
+        return redirect(url_for('index'))    
     return render_template('create_report.html', title='Crear Reporte', active='add_report',
         form=form)
