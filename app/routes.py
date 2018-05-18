@@ -40,8 +40,9 @@ def register():
     if form.validate_on_submit():
         person = Persona(username=form.username.data, nombre=form.name.data)
         person.set_password(form.password.data)
-        user = Usuario(correo=form.email.data, persona_id=person.id, sexo_id=form.sexo.data)
         db.session.add(person)
+        db.session.commit()
+        user = Usuario(correo=form.email.data, persona_id=person.id, sexo_id=form.sexo.data)
         db.session.add(user)
         db.session.commit()
         flash('El usuario ha sido registrado exitosamente!')
@@ -59,7 +60,8 @@ def create_report():
         lat = float(form.coordinates_lat.data)
         lng = float(form.coordinates_lng.data)
         zone = int(form.zone.data)
-        report = Reporte(usuario_id=current_user.id, fecha=form.date.data, delito_id=form.crime.data,
+        user = Usuario.query.filter_by(persona_id=current_user.id).first_or_404()
+        report = Reporte(usuario_id=user.id, fecha=form.date.data, delito_id=form.crime.data,
             hora_delito_id=form.hour.data, detalles=form.details.data, latitud=lat, longitud=lng, sector=zone)
         db.session.add(report)
         db.session.commit()
