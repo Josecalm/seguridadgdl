@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateField, HiddenField, validators
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from datetime import date
 from app.models import Persona, Usuario, CatalogoDelito, CatalogoSexo, CatalogoFuenteInfo, CatalogoHorario
@@ -41,7 +41,7 @@ class CreateReportForm(FlaskForm):
     zone = HiddenField()
 
 class EditProfileForm(FlaskForm):
-    nombre = TextAreaField()
+    name = TextAreaField()
     username = TextAreaField('Username', validators=[DataRequired()])
     sex = SelectField('Sexo', coerce=int, choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()] )
     submit = SubmitField('Guardar información')

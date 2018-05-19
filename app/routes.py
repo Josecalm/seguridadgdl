@@ -74,8 +74,9 @@ def create_report():
 def user(username):
     persona = Persona.query.filter_by(username=username).first_or_404()
     usuario = Usuario.query.filter_by(persona_id=current_user.id).first_or_404() 
+    sexo = CatalogoSexo.query.filter_by(id=usuario.sexo_id).first()
     return render_template('profile.html', title='Perfil de usuario', active='user_profile',
-        persona=persona, usuario=usuario)
+        persona=persona, usuario=usuario, sexo=sexo.descripcion)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -92,6 +93,6 @@ def edit_profile():
         return redirect(url_for( 'user', username=current_user.username ) )
     elif request.method == 'GET':
         form.username.data = current_user.username
-        form.nombre.data = current_user.nombre
+        form.name.data = current_user.nombre
     return render_template('edit_profile.html', title='Editar Perfil',
                            form=form)

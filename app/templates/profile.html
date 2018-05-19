@@ -34,7 +34,7 @@
                   <div class="col-md-5">
                     <div class="form-group label-floating">
                       <label class="control-label">Fecha de nacimiento</label>
-                      <h4 class="card-title">{{ persona.fec_nac }}</h4>
+                      <h4 class="card-title">{{ usuario.fecha_nac }}</h4>
                     </div>
                   </div>                  
                 </div>
@@ -43,7 +43,7 @@
                   <div class="col-md-5">
                     <div class="form-group label-floating">
                       <label class="control-label">Sexo</label>
-                      <h4 class="card-title">{{ persona.id_sexo }}</h4>
+                      <h4 class="card-title">{{ sexo }}</h4>
                     </div>
                   </div>                  
                 </div>
@@ -60,20 +60,6 @@
                 <a href="{{ url_for('edit_profile') }}" class="btn btn-success pull-right">Editar Perfil</a>
                 <div class="clearfix"></div>
               </form>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card card-profile">
-            <div class="card-avatar">
-              <a href="#pablo">
-                <img class="img" src="../static/img/faces/marc.jpg" />
-              </a>
-            </div>
-            <div class="content">
-              <h6 class="category text-gray">CEO / Co-Fundador</h6>
-              <h4 class="card-title">{{ persona.nombre }}</h4>
-              <a href="{{ url_for('logout') }}" class="btn btn-danger btn-round">Cerrar Sesión</a>
             </div>
           </div>
         </div>
