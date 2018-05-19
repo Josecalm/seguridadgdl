@@ -1,3 +1,4 @@
+
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, CreateReportForm, EditProfileForm
@@ -22,6 +23,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Nombre de usuario o contrasena no validos!')        
             return redirect(url_for('login'))
+
         login_user(user)
         return redirect(url_for('index'))
     return render_template('login.html', title='Ingresar', form=form)
@@ -36,7 +38,6 @@ def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = RegistrationForm()
-    #form.sexo.choices = [(s.id, s.descripcion) for s in CatalogoSexo.query.all()]
     if form.validate_on_submit():
         person = Persona(username=form.username.data, nombre=form.name.data)
         person.set_password(form.password.data)

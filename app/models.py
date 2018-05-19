@@ -3,128 +3,121 @@ from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-class CatalogoDelito(db.Model):
+class CrimeList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(50))
+    description = db.Column(db.String(50))
 
-    reporte = db.relationship('Reporte', backref='delito', lazy=True)
+    report = db.relationship('Report', backref='crime', lazy=True)
 
 
-class CatalogoEstadoChat(db.Model):
+class ChatStatusList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(15))
+    description = db.Column(db.String(15))
 
-    chat_estado = db.relationship('Chat', backref='estado_chat', lazy=True)
+    chat_status = db.relationship('Chat', backref='status_chat', lazy=True)
 
 
-class CatalogoEstadoReporte(db.Model):
+class ReportStatusList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(15))
+    description = db.Column(db.String(15))
 
-    reporte_estado = db.relationship('Reporte', backref='estado_reporte', lazy=True)
+    report_status = db.relationship('Report', backref='status_report', lazy=True)
 
 
-class CatalogoFuenteInfo(db.Model):
+class ReferenceInfoList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(20))
+    description = db.Column(db.String(20))
+
+    report_reference = db.relationship('Report', backref='reference_report', lazy=True)
 
 
-class CatalogoHorario(db.Model):
+class HourList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(15))
+    description = db.Column(db.String(15))
 
-    horario_delito_reporte = db.relationship('Reporte', backref='horario', lazy=True)
+    hour_crime_report = db.relationship('Report', backref='hour', lazy=True)
 
 
-class CatalogoSexo(db.Model):
+class SexList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    descripcion = db.Column(db.String(15))
+    description = db.Column(db.String(15))
 
-    usuario_sexo = db.relationship('Usuario', backref='sexo_usuario', lazy=True)
-    difunto_sexo = db.relationship('Difunto', backref='sexo_difunto', lazy=True)
+    person_sex = db.relationship('Person', backref='sex_person', lazy=True)
+    victim_sex = db.relationship('Victim', backref='sex_victim', lazy=True)
 
 
 class Chat(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    hora_peticion = db.Column(db.DateTime, default=datetime.utcnow)
-    hora_respuesta = db.Column(db.DateTime, default=datetime.utcnow)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
-    operador_id = db.Column(db.Integer, db.ForeignKey('operador.id'))
-    estado_id = db.Column(db.Integer, db.ForeignKey('catalogo_estado_chat.id'))
+    request_time = db.Column(db.DateTime, default=datetime.utcnow)
+    response_time = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    agent_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('chat_status_list.id'))
 
-class Difunto(db.Model):
+class Victim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50))
-    edad = db.Column(db.Integer)
-    sexo_id = db.Column(db.Integer, db.ForeignKey('catalogo_sexo.id'))
+    name = db.Column(db.String(50))
+    age = db.Column(db.Integer)
+    sex_id = db.Column(db.Integer, db.ForeignKey('sex_list.id'))
 
-    reporte_difunto = db.relationship('Reporte', backref='difunto_reporte', lazy=True)
+    report_victim = db.relationship('Report', backref='victim_report', lazy=True)
 
 
-class Operador(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    persona_id = db.Column(db.Integer, db.ForeignKey('persona.id'))
-
-    reporte_operador = db.relationship('Reporte', backref='operador_reporte', lazy=True)
-    chat_operador = db.relationship('Chat', backref='operador_chat', lazy=True)
-
-
-class Persona(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(50))
     username = db.Column(db.String(20), index=True, unique=True)
-    contrasena = db.Column(db.String(128))
+    password = db.Column(db.String(128))
+    email = db.Column(db.String(100), unique=True)
+    is_admin = db.Column(db.Boolean, default=False)
 
-    usuario_persona = db.relationship('Usuario', backref='persona_usuario', lazy=True)
-    usuario_operador = db.relationship('Operador', backref='persona_operador', lazy=True)
+    person_user = db.relationship('Person', backref='user_person', lazy=True)
+    report_user = db.relationship('Report', backref='user_report', lazy=True)
+    chat_user = db.relationship('Chat', backref='user_chat', lazy=True)
 
     def __repr__(self):
-        return '<Persona #{}: {}>'.format(self.id, self.username)
+        return '<User #{}: {} Admin: {}>'.format(self.id, self.username, self.is_admin)
 
     def get_id(self):
         return str(self.id).encode("utf-8").decode("utf-8")
 
     def set_password(self, password):
-        self.contrasena = generate_password_hash(password)
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.contrasena, password)
+        return check_password_hash(self.password, password)
 
 
-class Reporte(db.Model):
+class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'))
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
-    delito_id = db.Column(db.Integer, db.ForeignKey('catalogo_delito.id'))
-    operador_id = db.Column(db.Integer, db.ForeignKey('operador.id'))
-    hora_delito_id = db.Column(db.Integer, db.ForeignKey('catalogo_horario.id'))
-    latitud = db.Column(db.Float)
-    longitud = db.Column(db.Float)
-    sector = db.Column(db.Integer)
-    estado_id = db.Column(db.Integer, db.ForeignKey('catalogo_estado_reporte.id'))
-    detalles = db.Column(db.Text)
-    difunto_id = db.Column(db.Integer, db.ForeignKey('difunto.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    crime_id = db.Column(db.Integer, db.ForeignKey('crime_list.id'))
+    agent_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    crime_hour_id = db.Column(db.Integer, db.ForeignKey('hour_list.id'))
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
+    zone = db.Column(db.Integer)
+    status_id = db.Column(db.Integer, db.ForeignKey('report_status_list.id'))
+    details = db.Column(db.Text)
+    victim_id = db.Column(db.Integer, db.ForeignKey('victim.id'))
 
 
-class Usuario(db.Model):
+class Person(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fecha_nac = db.Column(db.DateTime)
-    sexo_id = db.Column(db.Integer, db.ForeignKey('catalogo_sexo.id'))
-    correo = db.Column(db.String(100), unique=True)
-    persona_id = db.Column(db.Integer, db.ForeignKey('persona.id'))
+    name = db.Column(db.String(50))
+    birthdate = db.Column(db.DateTime)
+    sex_id = db.Column(db.Integer, db.ForeignKey('sex_list.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    reporte_usuario = db.relationship('Reporte', backref='usuario_reporte', lazy=True)
-    chat_usuario = db.relationship('Chat', backref='usuario_reporte', lazy=True)
-
-class Sector(db.Model):
+class Zone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(35))
-    coordenadas = db.Column(db.JSON)
+    name = db.Column(db.String(35))
+    coordinates = db.Column(db.JSON)
 
-class Mapa(db.Model):
+class Map(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    poligono = db.Column(db.JSON)
+    polygon = db.Column(db.JSON)
 
 @login.user_loader
 def load_user(id):
-    return Persona.query.get(int(id))
+    return User.query.get(int(id))
