@@ -57,9 +57,6 @@ class Chat(db.Model):
     user = db.relationship('User', foreign_keys='Chat.user_id')
     agent = db.relationship('User', foreign_keys='Chat.user_id')
 
-    #chat = db.relationship('Chat', primaryjoin="or_(User.id==Chat.user_id, User.id==Chat.agent_id)", lazy='dynamic')
-    #agent = db.relationship("User", foreign_keys="User.chat_agent" )
-    #user = db.relationship("User", foreign_keys="User.chat_user" )
 
 class Victim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -78,10 +75,10 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
 
     person_user = db.relationship('Person', backref='user_person', lazy=True)
-    report_user = db.relationship('Report', backref='user_report', lazy=True)
-    chat_user = db.relationship('Chat', backref='user_chat', lazy=True)
-    #chat_agent = db.relationship('Chat', backref='agent_chat', lazy=True)
-
+    report_user = db.relationship('Report', backref='Report.user_id',
+        primaryjoin='User.id==Report.user_id', lazy='dynamic')
+    chat_user = db.relationship('Chat', backref='Chat.user_id',
+        primaryjoin='User.id==Chat.user_id', lazy='dynamic')
 
     def __repr__(self):
         return '<User #{}: {} Admin: {}>'.format(self.id, self.username, self.is_admin)

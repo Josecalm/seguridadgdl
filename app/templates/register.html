@@ -176,18 +176,13 @@
 <!-- Material Dashboard javascript methods -->
 <script src="../static/js/material-dashboard.js"></script>
 
-  <script>
-    $(function() {
-      $( ".dtpick" ).datepicker( {
-        dateFormat: 'dd-mm-yy',
-      });
+<script>
+  $(function() {
+    $( ".dtpick" ).datepicker( {
+      dateFormat: 'dd-mm-yy',
+      maxDate: new Date
     });
-  </script>
-
-  <script>
-    $(function() { $(".dtpick").datepicker({  maxDate: '0'}); });
-  </script>
-
-
+  });
+</script>
 
 </html>
