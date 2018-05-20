@@ -54,6 +54,13 @@ class Chat(db.Model):
     agent_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status_id = db.Column(db.Integer, db.ForeignKey('chat_status_list.id'))
 
+    user = db.relationship('User', foreign_keys='Chat.user_id')
+    agent = db.relationship('User', foreign_keys='Chat.user_id')
+
+    #chat = db.relationship('Chat', primaryjoin="or_(User.id==Chat.user_id, User.id==Chat.agent_id)", lazy='dynamic')
+    #agent = db.relationship("User", foreign_keys="User.chat_agent" )
+    #user = db.relationship("User", foreign_keys="User.chat_user" )
+
 class Victim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
@@ -73,6 +80,8 @@ class User(UserMixin, db.Model):
     person_user = db.relationship('Person', backref='user_person', lazy=True)
     report_user = db.relationship('Report', backref='user_report', lazy=True)
     chat_user = db.relationship('Chat', backref='user_chat', lazy=True)
+    #chat_agent = db.relationship('Chat', backref='agent_chat', lazy=True)
+
 
     def __repr__(self):
         return '<User #{}: {} Admin: {}>'.format(self.id, self.username, self.is_admin)
@@ -85,6 +94,14 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+
+class Person(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    birthdate = db.Column(db.DateTime)
+    sex_id = db.Column(db.Integer, db.ForeignKey('sex_list.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 
 class Report(db.Model):
@@ -100,14 +117,7 @@ class Report(db.Model):
     status_id = db.Column(db.Integer, db.ForeignKey('report_status_list.id'))
     details = db.Column(db.Text)
     victim_id = db.Column(db.Integer, db.ForeignKey('victim.id'))
-
-
-class Person(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    birthdate = db.Column(db.DateTime)
-    sex_id = db.Column(db.Integer, db.ForeignKey('sex_list.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    reference_id = db.Column(db.Integer, db.ForeignKey('reference_info_list.id'))
 
 class Zone(db.Model):
     id = db.Column(db.Integer, primary_key=True)
