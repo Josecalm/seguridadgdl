@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header" data-background-color="red">
+              <h4 class="title">Reportes del usuario</h4>
+              <p class="category">Tus reportes enviados</p>
+            </div>
+            <div class="card-content">            
+			  <table class="table table-hover">
+			    <thead>
+			      <tr>
+			      	<th style="display: none;">Detalles</th>
+			        <th> <b>#ID</b></th>
+			        <th> <b>ID Usuario</b></th>
+			        <th> <b>Fecha de subida</b> </th>
+			        <th> <b>Tipo de evento</b></th>
+			        <th> <b>Estado</b> </th>
+			        <th style="display: none;">Longitud</th>
+			        <th style="display: none;">Latitud</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			    	{% for report in reports %}
+					<tr>
+						<td style="display: none">{{ report.status_details }}</td>
+						<td>{{ report.id }}</td>
+						<td>{{ report.user.username }}</td>
+						<td>{{ report.date.date() }}</td>
+						<td>{{ crimes[report.crime_id] }}</td>
+						<td>{{ statuses[report.status_id] }}</td>
+						<td style="display: none">{{ report.latitude }}</td>
+						<td style="display: none">{{ report.longitude }}</td>
+					</tr>
+					{% endfor %}			      
+			    </tbody>
+			  </table>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"> <b> Detalles </b> </h4>
+      </div>
+      <div class="modal-body">
+      	<form action="" method="post">
+		   	{{ form.hidden_tag() }}
+   	        {{ form.coordinates_lng(id="coordinates_lng") }}
+            {{ form.coordinates_lat(id="coordinates_lat") }}
+   	        <div class="row">
+              <div id="map_report"></div>
+            </div>
+		    <div class="row">
+              <div class="col-md-4">
+                <div class="form-group label-floating">
+                  {{ form.status.label(class="control-label", size=20) }} 
+                  {{ form.status( id="status") }}
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group label-floating">
+                  {{ form.status_details.label(class="control-label", size=10)}} 
+                  {{ form.status_details(class="form-control", id="status_details") }}
+                  {{ form.report_id(id="id") }}
+                </div>
+              </div>
+            </div>
+            <div>{{ form.submit() }}</div>
+      	</form>
+        <!--p><input type="text" class="input-sm" id="status"/></p-->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+       
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}
+
+{% block script %}
+	<script>
+		var map;
+		var x;
+		var y;
+		var uluru;
+		$('table tbody tr  td').on('click',function(){
+		    $("#myModal").modal("show");
+		    $("#status_details").val($(this).closest('tr').children()[0].textContent);
+		    $("#report_id").val($(this).closest('tr').children()[1].textContent);
+		    $("#coordinates_lat").val($(this).closest('tr').children()[7].textContent);
+		    $("#coordinates_lng").val($(this).closest('tr').children()[6].textContent);
+
+		    x = parseFloat(document.getElementById('coordinates_lat').value)
+		    y = parseFloat(document.getElementById('coordinates_lng').value)
+		    uluru = {lat: y, lng: x};
+		    map = new google.maps.Map(document.getElementById('map_report'), {
+		      zoom: 15,
+		      center: uluru,
+		      draggableCursor: 'default'
+		    });
+		    var prevMarker = new google.maps.Marker({
+		      position: uluru,
+		      map: map
+		    });
+		});
+	</script>
+	
+
+
+{% endblock %}
+

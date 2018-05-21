@@ -4,6 +4,7 @@ app/__pycache__
 venv/
 *.json
 load_sectors_json.py
+fill-lists.py
 # RECOMMENDED #
 
 #Compiled source #

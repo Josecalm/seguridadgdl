@@ -5,20 +5,83 @@
 {% endblock %}
 
 {% block script %}
+  <script src="../static/js/zones.js" type="text/javascript"></script>
+  <script src="../static/js/gdl.js" type="text/javascript"></script>
   <script type="text/javascript">
+    var poly_array = [];
+    var map;
+    var uluru;
     $(document).ready(function() {
         if ($('.main-panel > .content').length == 0) {
             $('.main-panel').css('height', '100%');
         }
-        var uluru = {lat: 20.6556096, lng: -103.331120};
-        var map = new google.maps.Map(document.getElementById('map'), {
+        uluru = {lat: 20.6556096, lng: -103.331120};
+        map = new google.maps.Map(document.getElementById('map'), {
           zoom: 13,
           center: uluru
         });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
+        makePolygons();
+        drawPolygons();
     });
+
+    function drawPolygons() {
+      for (var i = poly_array.length - 1; i >= 0; i--) {
+        poly_array[i].setMap(map);
+        var addListener = function (i) {
+          var infoWindow = new google.maps.InfoWindow();
+          infoWindow.setContent("Información : " + poly_array[i].get("Info"));
+          infoWindow.setPosition(uluru); 
+          google.maps.event.addListener(poly_array[i], 'click', function(){
+              infoWindow.open(map);                 
+          });
+        }
+        addListener(i);
+      }
+    }
+
+
+    function makePolygons() {
+      for (var i = 0; i < map_json['features'].length; i++) {
+        var path = [];
+        for (var j = 0; j < map_json['features'][i]['geometry']['coordinates'].length; j++) {
+          path.push(new google.maps.LatLng(map_json['features'][i]['geometry']['coordinates'][j][1], 
+            map_json['features'][i]['geometry']['coordinates'][j][0]));
+        }
+
+        // Green: #4cce62 - Yellow: #d8d634 - Orange: #d86d34 - Red: #dd1c39
+        var crime_list_count = 4 // Update when adding crimes to list
+        var color = '#000000';
+
+        if (zone_data_json['zones'][i][crime_list_count] == 'Baja') {
+          color = '#4cce62';
+        }
+        else if (zone_data_json['zones'][i][crime_list_count] == 'Media') {
+          color = '#d8d634';
+        }
+        else if (zone_data_json['zones'][i][crime_list_count] == 'Alta') {
+          color = '#d86d34';
+        }
+        else if (zone_data_json['zones'][i][crime_list_count] == 'Critica') {
+          color = '#dd1c39';
+        }
+        else {
+          color = "#FFFFFF";
+        }
+        
+        var polygon = new google.maps.Polygon({
+          paths: path,
+          fillColor: color,
+          fillOpacity: 0.7,
+          strokeColor: '#000000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2
+         });
+
+        var info = "</br>Sector: " + i + "</br>Asaltos: " + zone_data_json['zones'][i][0] + "</br>Homicidios: " + zone_data_json['zones'][i][1] + "</br>Violaciones: " + zone_data_json['zones'][i][2] + "</br>Posesión armas/drogas: " + zone_data_json['zones'][i][3] + "</br>Nivel Inseguridad: " + zone_data_json['zones'][i][4];
+        polygon.set("Info",  info);
+
+        poly_array.push(polygon);
+      }
+    }
   </script>
 {% endblock %}

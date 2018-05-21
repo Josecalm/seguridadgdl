@@ -105,16 +105,20 @@ class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     date = db.Column(db.DateTime, default=datetime.utcnow)
+    upload_date = db.Column(db.DateTime, default=datetime.utcnow)
     crime_id = db.Column(db.Integer, db.ForeignKey('crime_list.id'))
     agent_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     crime_hour_id = db.Column(db.Integer, db.ForeignKey('hour_list.id'))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     zone = db.Column(db.Integer)
-    status_id = db.Column(db.Integer, db.ForeignKey('report_status_list.id'))
+    status_id = db.Column(db.Integer, db.ForeignKey('report_status_list.id'), default=1)
+    status_details = db.Column(db.Text, default="Tu reporte ha sido enviado y está en espera de revisión.")
     details = db.Column(db.Text)
     victim_id = db.Column(db.Integer, db.ForeignKey('victim.id'))
     reference_id = db.Column(db.Integer, db.ForeignKey('reference_info_list.id'))
+
+    user = db.relationship('User', foreign_keys='Report.user_id')
 
 class Zone(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header" data-background-color="red">
+              <h4 class="title">Reportes del usuario</h4>
+              <p class="category">Tus reportes enviados</p>
+            </div>
+            <div class="card-content">            
+			  <table class="table table-hover">
+			    <thead>
+			      <tr>
+			      	<th style="display: none;">Detalles</th>
+			        <th> <b>#ID</b></th>
+			        <th> <b>Fecha de subida</b> </th>
+			        <th> <b>Tipo de evento</b></th>
+			        <th> <b>Estado</b> </th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			    	{% for report in reports %}
+					<tr>
+						<td style="display: none">{{ report.status_details }}</td>
+						<td>{{ report.id }}</td>
+						<td>{{ report.date.date() }}</td>
+						<td>{{ crimes[report.crime_id] }}</td>
+						<td>{{ statuses[report.status_id] }}</td>
+					</tr>
+					{% endfor %}			      
+			    </tbody>
+			  </table>
+			</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"> Detalles del reporte </h4>
+      </div>
+      <div class="modal-body">
+        <p id="txtdetails"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+{% endblock %}
+
+{% block script %}
+	<script>
+		$('table tbody tr  td').on('click',function(){
+		    $("#myModal").modal("show");
+		    $("#txtdetails").html($(this).closest('tr').children()[0].textContent);
+		});
+	</script>
+{% endblock %}
+

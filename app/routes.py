@@ -1,16 +1,40 @@
-
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, CreateReportForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, CreateReportForm, EditProfileForm, EditStatusReport
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import Person, User, CrimeList, HourList, \
-    ReferenceInfoList, Report, SexList
+    ReferenceInfoList, Report, SexList, Zone
 from datetime import date
+from app.fuzzyLogic import generate_fuzzy_values
+import json
 
 
 @app.route('/')
 @app.route('/index')
 def index():
+    reports = Report.query.all()
+    zone_count = Zone.query.count()
+    crime_list_count = CrimeList.query.count()
+    zone_arr = []
+    crime_arr = []
+    for i in range(crime_list_count + 1):
+        crime_arr.append(0)
+
+    for i in range(zone_count):
+        zone_arr.append(list(crime_arr))
+
+    # TODO: Add conditional to only count accepted reports in array
+    for r in reports:
+        zone_arr[int(r.zone)-1][int(r.crime_id)-2] += 1
+
+    for z in zone_arr:
+        z[crime_list_count] = generate_fuzzy_values(z[0], z[1],
+            z[2], z[3])
+
+    with open('app/static/js/zones.js', 'w') as f:
+        f.write('var zone_data_json = ')
+        json.dump({'zones': zone_arr}, f)
+        f.write(";")
     return render_template('index.html', title='Inicio', active='maps')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -23,8 +47,9 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Nombre de usuario o contrasena no validos!')        
             return redirect(url_for('login'))
-
         login_user(user)
+        if user.is_admin:
+            return redirect(url_for('admin_reports'))
         return redirect(url_for('index'))
     return render_template('login.html', title='Ingresar', form=form)
 
@@ -62,9 +87,17 @@ def create_report():
             crime_hour_id=form.hour.data, latitude=lat, longitude=lng, zone=zone, details=form.details.data, reference_id=form.reference.data)
         db.session.add(report)
         db.session.commit()
-        return redirect(url_for('index'))    
+        return redirect(url_for('user_reports'))    
     return render_template('create_report.html', title='Crear Report', active='add_report',
         form=form)
+
+@app.route('/user_reports', methods=['GET', 'POST'])
+@login_required
+def user_reports():
+    reports = Report.query.filter_by(user_id=current_user.id)
+    crimes = ['n/a', 'n/a', 'Asalto', 'Homicidio', 'Violación', 'Posesión Armas/Drogas']
+    statuses = ['n/a', 'Nuevo', 'En revision', 'Aceptado', 'Rechazado']
+    return render_template('user_reports.html', title='Mis reportes', active='user_reports', statuses=statuses, reports=reports, crimes=crimes)
 
 @app.route('/user/<username>')
 @login_required
@@ -93,3 +126,19 @@ def edit_profile():
         form.name.data = person.name
     return render_template('edit_profile.html', title='Editar Perfil',
                            form=form)
+
+@app.route('/admin_reports', methods=['GET', 'POST'])
+@login_required
+def admin_reports():
+    form = EditStatusReport()    
+    reports = Report.query.all()
+    crimes = ['n/a', 'n/a', 'Asalto', 'Homicidio', 'Violación', 'Posesión Armas/Drogas']
+    statuses = ['n/a', 'Nuevo', 'En revision', 'Aceptado', 'Rechazado']
+    if form.validate_on_submit():
+        report = Report.query.get(form.report_id.data)
+        report.status_id = form.status.data
+        report.status_details = form.status_details.data
+        db.session.commit()
+        return redirect(url_for('admin_reports'))   
+
+    return render_template('reports.html', title='Operador', active='admin_reports', reports=reports, statuses=statuses, crimes=crimes, form=form)

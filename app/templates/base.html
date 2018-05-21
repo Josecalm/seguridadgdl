@@ -32,21 +32,36 @@
       </div>
       <div class="sidebar-wrapper">
         <ul class="nav">
-          {% if active == 'maps' or current_user.is_anonymous%}
-          <li class="active">
+          {% if current_user.is_anonymous %}
+            <li class="active">
+              <a href="{{ url_for('index') }}">
+                <i class="material-icons">location_on</i>
+                <p>Mapa</p>
+              </a>
+            </li>
           {% else %}
-          <li>
+          {% if current_user.is_admin %}
+            <li class="active">
+              <a href="{{ url_for('admin_reports') }}">
+                <i class="material-icons">content_paste</i>
+                <p>Ver reportes</p>
+              </a>
+            </li>
+          {% else %}
+          {% if active == 'maps'%}
+            <li class="active">
+          {% else %}
+            <li>
           {% endif %}
             <a href="{{ url_for('index') }}">
-              <i class="material-icons">location_on</i>
-              <p>Mapa</p>
-            </a>
+                <i class="material-icons">location_on</i>
+                <p>Mapa</p>
+              </a>   
           </li>
-          {% if current_user.is_authenticated %}
           {% if active == 'add_report' %}
-          <li class="active">
+            <li class="active">
           {% else %}
-          <li>
+            <li>
           {% endif %}  
             <a href="{{ url_for('create_report') }}">
               <i class="material-icons">note_add</i>
@@ -54,35 +69,37 @@
             </a>
           </li>
           {% if active == 'user_reports' %}
-          <li class="active">
+            <li class="active">
           {% else %}
-          <li>
+            <li>
           {% endif %}  
-            <a href="#">
+            <a href="{{ url_for('user_reports') }}">
               <i class="material-icons">content_paste</i>
               <p>Tus reportes</p>
             </a>
           </li>
+          <!--
           {% if active == 'chat' %}
-          <li class="active">
+            <li class="active">
           {% else %}
-          <li>
+            <li>
           {% endif %}  
             <a href="#">
               <i class="material-icons">chat</i>
               <p>Chat</p>
             </a>
-          </li>
+          </li-->
           {% if active == 'user_profile' %}
-          <li class="active">
+            <li class="active">
           {% else %}
-          <li>
+            <li>
           {% endif %}  
           <a href="{{ url_for( 'user', username=current_user.username ) }}">
               <i class="material-icons">account_box</i>
               <p>Perfil ({{current_user.username}})</p>
             </a>
           </li>
+          {% endif %}
         {% endif %}
         </ul>
       </div>

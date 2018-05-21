@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateField, HiddenField, validators
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from datetime import date
-from app.models import Person, User, CrimeList, SexList, ReferenceInfoList, HourList
+from app.models import Person, User, CrimeList, SexList, ReferenceInfoList, HourList, ReportStatusList
 
 class LoginForm(FlaskForm):
     username = StringField('Userio', validators=[DataRequired()])
@@ -50,3 +50,13 @@ class EditProfileForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if ((user is not None) and (user.username != username.data)):
             raise ValidationError('Por favor ingresa otro nombre de usuario.')
+
+class EditStatusReport(FlaskForm):
+    report_id = HiddenField()
+    status = SelectField('Estado', coerce=int, choices = [(s.id, s.description) for s in ReportStatusList.query.all()], default = 1 )
+    status_details = TextAreaField('Detalles del estado', validators=[DataRequired()])
+    coordinates_lng = HiddenField()
+    coordinates_lat = HiddenField()
+    submit = SubmitField('Guardar cambios')
+
+

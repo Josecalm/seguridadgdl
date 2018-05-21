@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div id="map"></div>
+{% endblock %}
+
+{% block script %}
+  <script type="text/javascript">
+    $(document).ready(function() {
+        if ($('.main-panel > .content').length == 0) {
+            $('.main-panel').css('height', '100%');
+        }
+        var uluru = {lat: 20.6556096, lng: -103.331120};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 13,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+    });
+  </script>
+{% endblock %}
