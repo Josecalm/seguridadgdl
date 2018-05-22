@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from app.funcionesMembresia import *
 
 conjAsaltoRobo = ["Baja", "Media", "Alta"]
@@ -8,10 +6,10 @@ conjSecVioAcos = ["Baja", "Media", "Alta"]
 conjDrogArmas = ["Baja", "Media", "Alta"]
 conjInseguridad = ["Baja", "Media", "Alta", "Critica"]
 
-nivsMemAsaltoRobo = []
-nivsMemHomic = []
-nivsMemSecVioAcos = []
-nivsMemDrogArmas = []
+nivsMemAsaltoRobo = [0.0, 0.0, 0.0]
+nivsMemHomic = [0.0, 0.0, 0.0]
+nivsMemSecVioAcos = [0.0, 0.0, 0.0]
+nivsMemDrogArmas = [0.0, 0.0, 0.0]
 nivsMemInseguridad = [0.0, 0.0, 0.0, 0.0]
 
 def posNivMemMayor(nivelesMem):
@@ -24,24 +22,25 @@ def posNivMemMayor(nivelesMem):
 	return posMayor
 
 def prodMembsAsaltoRobo(valorAsRob):
-	nivsMemAsaltoRobo.append(curva_z(valorAsRob, 10, 30))
-	nivsMemAsaltoRobo.append(triangular_suave(valorAsRob, 15, 50, 75))
-	nivsMemAsaltoRobo.append(curva_s(valorAsRob, 60, 80))
+	nivsMemAsaltoRobo[0] = curva_z(valorAsRob, 10, 30)
+	nivsMemAsaltoRobo[1] = triangular_suave(valorAsRob, 15, 50, 75)
+	nivsMemAsaltoRobo[2] = curva_s(valorAsRob, 60, 80)
 
 def prodMembsHomic(valorHomic):
-	nivsMemHomic.append(curva_z(valorHomic, 2, 4))
-	nivsMemHomic.append(triangular_suave(valorHomic, 2, 5, 8))
-	nivsMemHomic.append(curva_s(valorHomic, 6, 9))
+	nivsMemHomic[0] = curva_z(valorHomic, 2, 4)
+	nivsMemHomic[1] = triangular_suave(valorHomic, 2, 5, 8)
+	nivsMemHomic[2] = curva_s(valorHomic, 6, 9)
+	print(nivsMemHomic)
 
 def prodMembsSecVioAcos(valorSeViAc):
-	nivsMemSecVioAcos.append(curva_z(valorSeViAc, 2, 5))
-	nivsMemSecVioAcos.append(triangular_suave(valorSeViAc, 3, 6, 9))
-	nivsMemSecVioAcos.append(curva_s(valorSeViAc, 6, 8))
+	nivsMemSecVioAcos[0] = curva_z(valorSeViAc, 2, 5)
+	nivsMemSecVioAcos[1] = triangular_suave(valorSeViAc, 3, 6, 9)
+	nivsMemSecVioAcos[2] = curva_s(valorSeViAc, 6, 8)
 
 def prodMembsDrogArmas(valorDroArm):
-	nivsMemDrogArmas.append(curva_z(valorDroArm, 10, 20))
-	nivsMemDrogArmas.append(triangular_suave(valorDroArm, 10, 25, 45))
-	nivsMemDrogArmas.append(curva_s(valorDroArm, 30, 40))
+	nivsMemDrogArmas[0] = curva_z(valorDroArm, 10, 20)
+	nivsMemDrogArmas[1] = triangular_suave(valorDroArm, 10, 25, 45)
+	nivsMemDrogArmas[2] = curva_s(valorDroArm, 30, 40)
 
 def fuzzyAsaltoRobo(valorAsRob):
 	prodMembsAsaltoRobo(valorAsRob)

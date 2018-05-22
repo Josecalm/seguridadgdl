@@ -4,7 +4,7 @@
   <div class="content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-10">
           <div class="card">
             <div class="card-header" data-background-color="red">
               <h4 class="title">Editar Perfil</h4>
@@ -18,22 +18,23 @@
                 <div class="row">
                   <div class="col-md-5">
                     <div class="form-group label-floating">
-                      <label class="control-label"> {{ form.username.label }} </label>
-                      <h4 class="card-title">{{ form.username(size=20) }}</h4>
+                      <label class="control-label"> {{ form.username.label(class="control-label") }} </label>
+                      <h4 class="card-title">{{ form.username(class="form-control") }}</h4>
                       {% for error in form.username.errors %}
                       <span style="color: red;">[{{ error }}]</span>
                       {% endfor %}
                     </div>
-                  </div>                  
-                </div>
+                  </div>   
 
-                <div class="row">
                   <div class="col-md-5">
                     <div class="form-group label-floating">
-                      <label class="control-label"> {{ form.name.label }} </label>
-                      <h4 class="card-title">{{ form.name }}</h4>
+                      <label class="control-label"> {{ form.name.label(class="control-label") }} </label>
+                      <h4 class="card-title">{{ form.name(class="form-control") }}</h4>
+                      {% for error in form.name.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                      {% endfor %}
                     </div>
-                  </div>                  
+                  </div>   
                 </div>
 
                 <div class="row">
@@ -44,9 +45,7 @@
                   </div>
                 </div>
               
-                <div>{{ form.submit() }}</div>
-                <!--button type="submit" class="btn btn-success pull-right">Guardar información</button-->
-                <!--div class="clearfix"></div-->
+                <div>{{ form.submit(class="btn btn-success pull-right") }}</div>
               </form>
             </div>
           </div>

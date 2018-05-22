@@ -21,34 +21,40 @@
                     {{ form.zone }}
                     <div class="row">
                       <div class="col-md-4">
-                        <div class="form-group">
+                        <div>
                           {{ form.crime.label(class="control-label") }} {{ form.crime }}
                         </div>
                       </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
+                      <div class="col-md-2">
+                        <div>
                           {{ form.hour.label(class="control-label") }} {{ form.hour }}
                         </div>
                       </div>
-                      <div class="col-md-4">
-                        <div class="form-group">
+                      <div class="col-md-2 float-right">
+                        <div>
                             {{ form.reference.label(class="control-label") }} {{ form.reference }}
                         </div>
                       </div>
+                    </div>
                       <div class="row">
                         <div class="col-md-4">
                           <div class="form-group">
-                            {{ form.date.label(class="control-label") }} {{ form.date(class="dtpick")}}
+                            {{ form.date.label(class="control-label") }} {{ form.date(class='input-group date', id="dtpick")}}
+                            {% for error in form.date.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
                           </div>
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-md-12">
                           <div class="form-group">
-                            <label>DETALLES</label>
                               <div class="form-group label-floating">
-                                <label class="control-label">Cuéntanos más a detalle lo que pasó y lo que viste.</label>
-                                {{ form.details }}
+                                <label class="control-label">Detalles: Cuéntanos más a detalle lo que pasó y lo que viste.</label>
+                                {{ form.details(class="form-control") }}
+                                {% for error in form.details.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
                               </div>
                           </div>
                         </div>
@@ -68,7 +74,7 @@
   <script src="../static/js/gdl.js" type="text/javascript"></script>
   <script>
     $(function() {
-      $( ".dtpick" ).datepicker( {
+      $( "#dtpick" ).datepicker( {
         dateFormat: 'dd-mm-yy',
         maxDate: new Date
       });

@@ -52,12 +52,12 @@
                   </div>
                   <div class="row">
                     <div class="col-md-4">
-                      {{ form.submit() }}
+                      <a href="{{ url_for('register') }}" class="btn btn-primary btn-round">Registrarme</a>
                     </div>
                     <div class="col-md-2"></div>
                     <div class="col-md-4">
-                      <a href="{{ url_for('register') }}" class="btn btn-primary btn-round">Registrarme</a>
-                    </div>
+                      {{ form.submit(class="btn btn-primary btn-round") }}
+                    </div>                    
                   </div>
                   <div class="row">
                     <div class="col-md-8"></div>

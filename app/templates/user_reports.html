@@ -19,6 +19,8 @@
 			        <th> <b>Fecha de subida</b> </th>
 			        <th> <b>Tipo de evento</b></th>
 			        <th> <b>Estado</b> </th>
+			        <th style="display: none;">Longitud</th>
+			        <th style="display: none;">Latitud</th>
 			      </tr>
 			    </thead>
 			    <tbody>
@@ -29,6 +31,8 @@
 						<td>{{ report.date.date() }}</td>
 						<td>{{ crimes[report.crime_id] }}</td>
 						<td>{{ statuses[report.status_id] }}</td>
+						<td style="display: none" id="coordinates_lat">{{ report.latitude }}</td>
+						<td style="display: none" id="coordinates_lng">{{ report.longitude }}</td>
 					</tr>
 					{% endfor %}			      
 			    </tbody>
@@ -45,10 +49,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"> Detalles del reporte </h4>
+        <h4 class="modal-title"> <b> Detalles del reporte</b> </h4>
       </div>
       <div class="modal-body">
-        <p id="txtdetails"></p>
+        <div class="row">
+       		<div id="map_report"></div>
+     	</div>
+     	<p></p>
+        <div id="txtdetails" class="alert alert-primary" role="alert">
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
@@ -60,10 +69,32 @@
 {% endblock %}
 
 {% block script %}
+	
 	<script>
+		var map;
+		var x;
+		var y;
+		var uluru;
+
 		$('table tbody tr  td').on('click',function(){
 		    $("#myModal").modal("show");
 		    $("#txtdetails").html($(this).closest('tr').children()[0].textContent);
+
+		    $("#coordinates_lat").val($(this).closest('tr').children()[6].textContent);
+		    $("#coordinates_lng").val($(this).closest('tr').children()[5].textContent);
+
+		    x = parseFloat(document.getElementById('coordinates_lat').value)
+		    y = parseFloat(document.getElementById('coordinates_lng').value)
+		    uluru = {lat: y, lng: x};
+		    map = new google.maps.Map(document.getElementById('map_report'), {
+		      zoom: 15,
+		      center: uluru,
+		      draggableCursor: 'default'
+		    });
+		    var prevMarker = new google.maps.Marker({
+		      position: uluru,
+		      map: map
+		    });
 		});
 	</script>
 {% endblock %}

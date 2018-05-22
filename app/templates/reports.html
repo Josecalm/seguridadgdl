@@ -4,14 +4,15 @@
   <div class="content">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-10">
           <div class="card">
             <div class="card-header" data-background-color="red">
               <h4 class="title">Reportes del usuario</h4>
               <p class="category">Tus reportes enviados</p>
             </div>
-            <div class="card-content">            
-			  <table class="table table-hover">
+            <div class="card-content">
+              <input class="form-control" id="myInput" type="text" placeholder="Buscar...">            
+			  <table class="table table-hover" id="data" style="width:100%">
 			    <thead>
 			      <tr>
 			      	<th style="display: none;">Detalles</th>
@@ -19,12 +20,13 @@
 			        <th> <b>ID Usuario</b></th>
 			        <th> <b>Fecha de subida</b> </th>
 			        <th> <b>Tipo de evento</b></th>
+			        <th> <b>Sector</b></th>
 			        <th> <b>Estado</b> </th>
 			        <th style="display: none;">Longitud</th>
 			        <th style="display: none;">Latitud</th>
 			      </tr>
 			    </thead>
-			    <tbody>
+			    <tbody id="myTable">
 			    	{% for report in reports %}
 					<tr>
 						<td style="display: none">{{ report.status_details }}</td>
@@ -32,6 +34,7 @@
 						<td>{{ report.user.username }}</td>
 						<td>{{ report.upload_date.date() }}</td>
 						<td>{{ crimes[report.crime_id] }}</td>
+						<td>{{ report.zone }}</td>
 						<td>{{ statuses[report.status_id] }}</td>
 						<td style="display: none">{{ report.latitude }}</td>
 						<td style="display: none">{{ report.longitude }}</td>
@@ -51,7 +54,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"> <b> Detalles </b> </h4>
+        <h4 class="modal-title"> <b> Detalles del reporte</b> </h4>
       </div>
       <div class="modal-body">
       	<form action="" method="post">
@@ -62,28 +65,25 @@
               <div id="map_report"></div>
             </div>
 		    <div class="row">
-              <div class="col-md-4">
+              <div class="col-md-3">
                 <div class="form-group label-floating">
-                  {{ form.status.label(class="control-label", size=20) }} 
+                  {{ form.status.label(class="control-label") }} 
                   {{ form.status( id="status") }}
                 </div>
               </div>
-              <div class="col-md-4">
+              <div class="col-md-7">
                 <div class="form-group label-floating">
-                  {{ form.status_details.label(class="control-label", size=10)}} 
+                  {{ form.status_details.label(class="control-label", size=30)}} 
                   {{ form.status_details(class="form-control", id="status_details") }}
                   {{ form.report_id(id="id") }}
                 </div>
               </div>
             </div>
-            <div>{{ form.submit() }}</div>
+            <div class="modal-footer">
+            	<div>{{ form.submit(class="btn btn-info") }}</div>
+            	<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+            </div>            
       	</form>
-        <!--p><input type="text" class="input-sm" id="status"/></p-->
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-       
-      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -100,8 +100,8 @@
 		    $("#myModal").modal("show");
 		    $("#status_details").val($(this).closest('tr').children()[0].textContent);
 		    $("#report_id").val($(this).closest('tr').children()[1].textContent);
-		    $("#coordinates_lat").val($(this).closest('tr').children()[7].textContent);
-		    $("#coordinates_lng").val($(this).closest('tr').children()[6].textContent);
+		    $("#coordinates_lat").val($(this).closest('tr').children()[8].textContent);
+		    $("#coordinates_lng").val($(this).closest('tr').children()[7].textContent);
 
 		    x = parseFloat(document.getElementById('coordinates_lat').value)
 		    y = parseFloat(document.getElementById('coordinates_lng').value)
@@ -118,6 +118,43 @@
 		});
 	</script>
 	
+	 <script>
+	$(document).ready(function(){
+	  $("#myInput").on("keyup", function() {
+	    var value = $(this).val().toLowerCase();
+	    $("#myTable tr").filter(function() {
+	      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+	    });
+	  });
+	});
+	</script> 
+
+	 <script>
+	$(document).ready(function(){
+	    $('#data').after('<div> <ul id="nav" class="pagination"></ul> </div>');
+	    var rowsShown = 25;
+	    var rowsTotal = $('#data tbody tr').length;
+	    var numPages = rowsTotal/rowsShown;
+	    for(i = 0;i < numPages;i++) {
+	        var pageNum = i + 1;
+	        $('#nav').append('<li class="page-item"><a href="#" rel="'+i+'">'+pageNum+'</a></li> ');
+	    }
+	    $('#data tbody tr').hide();
+	    $('#data tbody tr').slice(0, rowsShown).show();
+	    $('#nav a:first').addClass('active');
+	    $('#nav a').bind('click', function(){
+
+	        $('#nav a').removeClass('active');
+	        $(this).addClass('active');
+	        var currPage = $(this).attr('rel');
+	        var startItem = currPage * rowsShown;
+	        var endItem = startItem + rowsShown;
+	        $('#data tbody tr').css('opacity','0.0').hide().slice(startItem, endItem).
+	        css('display','table-row').animate({opacity:1}, 300);
+	    });
+	});
+	</script> 
+
 
 
 {% endblock %}

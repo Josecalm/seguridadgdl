@@ -88,7 +88,7 @@ def create_report():
         db.session.add(report)
         db.session.commit()
         return redirect(url_for('user_reports'))    
-    return render_template('create_report.html', title='Crear Report', active='add_report',
+    return render_template('create_report.html', title='Crear Reporte', active='add_report',
         form=form)
 
 @app.route('/user_reports', methods=['GET', 'POST'])

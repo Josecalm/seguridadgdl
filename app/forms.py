@@ -34,7 +34,7 @@ class CreateReportForm(FlaskForm):
     hour = SelectField('Horario', coerce=int, choices = [(h.id, h.description) for h in HourList.query.all()])
     reference = SelectField('Fuente información', coerce=int, choices = [(r.id, r.description) for r in ReferenceInfoList.query.all()])
     date = DateField('Fecha', format='%d-%m-%Y')
-    details = TextAreaField()
+    details = TextAreaField(validators=[DataRequired()])
     submit = SubmitField('Crear reporte')
     coordinates_lng = HiddenField()
     coordinates_lat = HiddenField()
@@ -42,7 +42,7 @@ class CreateReportForm(FlaskForm):
 
 class EditProfileForm(FlaskForm):
     name = TextAreaField('Nombre', validators=[DataRequired()])
-    username = TextAreaField('Nombre de usuario', validators=[DataRequired()])
+    username = TextAreaField('Username', validators=[DataRequired()])
     sex = SelectField('Sexo', coerce=int, choices = [(s.id, s.description) for s in SexList.query.all()] )
     submit = SubmitField('Guardar información')
     

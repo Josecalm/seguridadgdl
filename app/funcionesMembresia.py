@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import math
 
 # Función Gamma, Trapecio Abierto Derecha
